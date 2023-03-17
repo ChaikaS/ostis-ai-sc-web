@@ -335,7 +335,7 @@ SCg.Render.prototype = {
         eventsWrap(g);
 
         this.d3_buses.exit().remove();
-
+        
         this.updateObjects();
     },
 
@@ -349,9 +349,9 @@ SCg.Render.prototype = {
             if (!d.need_observer_sync) return; // do nothing
 
             d.need_observer_sync = false;
-
+            
             var g = d3.select(this)
-                .attr("transform", 'translate(' + d.position.x + ', ' + d.position.y + ')')
+                .attr("transform", 'translate(' + d.position.x + ', ' + d.position.y + ')scale(' + d.scaleElem + ')')
                 .attr('class', function (d) {
                     return self.classState(d, (d.sc_type & sc_type_constancy_mask) ? 'SCgNode' : 'SCgNodeEmpty');
                 })
@@ -428,7 +428,7 @@ SCg.Render.prototype = {
                 });
 
             g.attr("transform", function (d) {
-                return 'translate(' + (d.position.x - (d.scale.x + self.linkBorderWidth) * 0.5) + ', ' + (d.position.y - (d.scale.y + self.linkBorderWidth) * 0.5) + ')';
+                return 'translate(' + (d.position.x - (d.scale.x + self.linkBorderWidth) * 0.5) + ', ' + (d.position.y - (d.scale.y + self.linkBorderWidth) * 0.5) +  ')scale(' + d.scaleElem + ')';
             });
 
         });
@@ -438,13 +438,13 @@ SCg.Render.prototype = {
             if (!d.need_observer_sync) return; // do nothing
             d.need_observer_sync = false;
 
-            if (d.need_update)
+                if (d.need_update)
                 d.update();
-            var d3_edge = d3.select(this);
-            SCgAlphabet.updateEdge(d, d3_edge, self.containerId);
-            d3_edge.attr('class', function (d) {
-                return self.classState(d, 'SCgEdge');
-            })
+                var d3_edge = d3.select(this);
+                SCgAlphabet.updateEdge(d, d3_edge, self.containerId);
+                d3_edge.attr('class', function (d) {
+                    return self.classState(d, 'SCgEdge');
+                })
                 .attr("sc_addr", function (d) {
                     return d.sc_addr;
                 });
