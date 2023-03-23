@@ -91,7 +91,6 @@ function ScgFromScImpl(_sandbox, _editor, aMapping) {
                     model_link.setOpacityElem(task[2].opacity);
                     model_link.setObjectState(SCgObjectState.FromMemory);
                 }
-
             }
 
             editor.render.update();

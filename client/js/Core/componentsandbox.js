@@ -281,10 +281,10 @@ SCWeb.core.ComponentSandbox.prototype.updateContent = async function (contentTyp
 
         let mainElements = [];
         for (let triple of resultLevel) {
-            mainElements.push(triple.get('mainNode').value)
-            self.eventStructUpdate(true, triple.get('src').value, triple.get('edge').value, levelScales[0]);
+            mainElements.push(triple.get('mainNode').value);
+            self.eventStructUpdate(true, triple.get('src').value, triple.get('edge').value, levelScales[0]); 
         };
-
+        
         let searchAllLevelEdges = async function (elementsArr, levelScales, level, visitedElements) {
             let levelScale;
 
@@ -365,7 +365,7 @@ SCWeb.core.ComponentSandbox.prototype.updateContent = async function (contentTyp
                     levelNodes.push(nodeSecond);
                     visitedElements.push(nodeSecond);
                 };
-
+                if (!levelNodes.length) return levelNodes;
                 self.eventStructUpdate(true, triple.get("src").value, triple.get("edgeFromContourToSecondNode").value, scale);
                 self.eventStructUpdate(true, triple.get("src").value, triple.get("edgeFromContourToMainEdge").value, scale);
                 if (withRelation) {
