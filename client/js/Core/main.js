@@ -45,11 +45,15 @@ SCWeb.core.Main = {
 
                         SCWeb.ui.TaskPanel.init().then(function () {
                             SCWeb.core.Server.init(function (data) {
+                                const url = parseURL(window.location.href);
+                                url.searchObject.mode = url.searchObject.mode ?? 0;
+
                                 self.menu_commands = data.menu_commands;
                                 self.user = data.user;
-
+                                
                                 data.menu_container_id = params.menu_container_id;
-
+                                data.mode = Number(url.searchObject.mode);
+                                
                                 SCWeb.core.Translation.fireLanguageChanged(self.user.current_lang);
 
                                 Promise.all([SCWeb.ui.Core.init(data),
@@ -59,7 +63,6 @@ SCWeb.core.Main = {
                                 .then(function () {
                                     resolve();
 
-                                    const url = parseURL(window.location.href);
                                     if (url.searchObject && SCWeb.core.Main.pageShowedForUrlParameters(url.searchObject)) {
                                         return;
                                     }
