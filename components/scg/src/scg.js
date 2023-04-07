@@ -132,6 +132,14 @@ SCg.Editor.prototype = {
                 self.hideTool(self.toolUndo());
                 self.hideTool(self.toolRedo());
             }
+            if (SCWeb.core.Main.mode === 5) {
+                self.hideTool(self.toolSwitch());
+                self.hideTool(self.toolSelect());
+                self.hideTool(self.toolLink());
+                self.hideTool(self.toolUndo());
+                self.hideTool(self.toolRedo());
+                self.hideTool(self.toolClear());
+            }
             if (self.resolveControls)
                 self.resolveControls(tools_container);
         });
@@ -734,7 +742,8 @@ SCg.Editor.prototype = {
                 this.showTool(this.toolSetContent());
             }
         }
-        if (this.scene.selected_objects.length > 0) this.showTool(this.toolDelete());
+
+        if (this.scene.selected_objects.length > 0 && SCWeb.core.Main.mode !== 5) this.showTool(this.toolDelete());
     },
 
 
