@@ -1,7 +1,6 @@
 const scHelper = null;
 const scKeynodes = null;
 const currentYear = new Date().getFullYear();
-const last_page_cmd_addr = 'last_page_cmd_addr';
 const last_page_cmd_args = 'last_page_cmd_args';
 
 function ScClientCreate() {
@@ -27,7 +26,7 @@ SCWeb.core.Main = {
      * - menu_container_id - id of dom element, that will contain menu items
      */
     init: function (params) {
-        return new Promise((resolve)=>{
+        return new Promise((resolve) => {
             const self = this;
             //SCWeb.ui.Locker.show();
 
@@ -50,24 +49,24 @@ SCWeb.core.Main = {
 
                                 self.menu_commands = data.menu_commands;
                                 self.user = data.user;
-                                
+
                                 data.menu_container_id = params.menu_container_id;
                                 data.mode = Number(url.searchObject.mode);
-                                
+
                                 SCWeb.core.Translation.fireLanguageChanged(self.user.current_lang);
 
                                 Promise.all([SCWeb.ui.Core.init(data),
-                                    SCWeb.core.ComponentManager.init(),
-                                    SCWeb.core.Translation.update()
+                                SCWeb.core.ComponentManager.init(),
+                                SCWeb.core.Translation.update()
                                 ])
-                                .then(function () {
-                                    resolve();
+                                    .then(function () {
+                                        resolve();
 
-                                    if (url.searchObject && SCWeb.core.Main.pageShowedForUrlParameters(url.searchObject)) {
-                                        return;
-                                    }
-                                    SCWeb.core.Main.showDefaultPage(params);
-                                });
+                                        if (url.searchObject && SCWeb.core.Main.pageShowedForUrlParameters(url.searchObject)) {
+                                            return;
+                                        }
+                                        SCWeb.core.Main.showDefaultPage(params);
+                                    });
                             });
                         });
                     });
@@ -103,7 +102,7 @@ SCWeb.core.Main = {
         const scg_view = urlObject['scg_structure_view_only'];
         const lang = urlObject['lang'];
         const modeUrl = Number(urlObject['mode']);
-        
+
         if (sys_id) {
             const window_lang = window.scKeynodes[lang];
             if (window_lang) {
@@ -113,7 +112,7 @@ SCWeb.core.Main = {
             SCWeb.core.Main.doDefaultCommandWithSystemIdentifier(sys_id);
             SCWeb.core.Main.mode = modeUrl ?? 0;
             window.history.replaceState(null, null, window.location.pathname);
-            if (scg_view){
+            if (scg_view) {
                 const hide_tools = urlObject['hide_tools'];
                 const hide_borders = urlObject['hide_borders'];
 
@@ -121,22 +120,22 @@ SCWeb.core.Main = {
                 $('#static-window-container').hide();
                 $('#header').hide();
                 $('#footer').hide();
-                $('#window-container').css({'padding-right':'', 'padding-left':''});
+                $('#window-container').css({ 'padding-right': '', 'padding-left': '' });
 
                 this.waitForElm('.sc-contour').then(() => {
                     $('#window-container').children().children().children().children().hide();
-                    $('.sc-contour').css({'height':'100%','width':'100%','position':'absolute', "background-color": "none", "border": "0", "padding": "0px", "border-radius": "0px"});
+                    $('.sc-contour').css({ 'height': '100%', 'width': '100%', 'position': 'absolute', "background-color": "none", "border": "0", "padding": "0px", "border-radius": "0px" });
                     $('.scs-scn-view-toogle-button').hide().click();
                     $('.sc-window').css({ "padding": "0px", "overflow": "hidden" });
                     $('.panel-body').css({ "padding": "0px", "overflow": "hidden" });
                     $('.scs-scn-element').css("cursor", "auto !important");
-                    $("[id*='tools-']").parent().css({"height": "100%", "width": "100%"});
+                    $("[id*='tools-']").parent().css({ "height": "100%", "width": "100%" });
                     $("[id*='tools-']").parent().parent().css("height", "100%");
 
                     if (hide_borders) {
-                        $('.sc-contour').css({'border': 'none'});
-                        $('.panel-default').css({'border-color': '#FFFFFF'});
-                        $('.main-container').css({'padding-left': '0', 'padding-right': '0'});
+                        $('.sc-contour').css({ 'border': 'none' });
+                        $('.panel-default').css({ 'border-color': '#FFFFFF' });
+                        $('.main-container').css({ 'padding-left': '0', 'padding-right': '0' });
                     }
                 });
 
@@ -156,14 +155,14 @@ SCWeb.core.Main = {
             if (document.querySelector(selector)) {
                 return resolve(document.querySelector(selector));
             }
-    
+
             const observer = new MutationObserver(() => {
                 if (document.querySelector(selector)) {
                     resolve(document.querySelector(selector));
                     observer.disconnect();
                 }
             });
-    
+
             observer.observe(document.body, {
                 childList: true,
                 subtree: true
@@ -193,16 +192,22 @@ SCWeb.core.Main = {
         function start(a) {
             SCWeb.core.Main.doDefaultCommand([a]);
             if (params.first_time)
-                $('#help-modal').modal({"keyboard": true});
+                $('#help-modal').modal({ "keyboard": true });
         }
 
-        const argumentAddr = window.scKeynodes['ui_start_sc_element'];
+        argumentAddr = window.scKeynodes['ui_start_sc_element'];
+        const last_page_cmd_args = [getCookie('last_page_cmd_args')]
+        if (last_page_cmd_args) {
+            argumentAddr = last_page_cmd_args[0];
+        }
+
         let startScElements = await window.scHelper.getSetElements(argumentAddr);
         if (startScElements.length) {
             start(startScElements[0]);
         } else {
             start(argumentAddr);
         }
+
         $('.copyright').text(`Copyright © 2012 - ${currentYear} OSTIS`);
     },
 
@@ -224,7 +229,6 @@ SCWeb.core.Main = {
             if (result.question !== undefined) {
                 const commandState = new SCWeb.core.CommandState(cmd_addr, cmd_args);
                 SCWeb.ui.WindowManager.appendHistoryItem(result.question, commandState);
-                setCookie(last_page_cmd_addr, cmd_addr);
                 setCookie(last_page_cmd_args, cmd_args);
             } else if (result.command !== undefined) {
             } else {
@@ -304,11 +308,6 @@ SCWeb.core.Main = {
                 self.default_cmd = addrs[self.default_cmd_str];
                 if (self.default_cmd) {
                     self.doCommand(self.default_cmd, cmd_args);
-                    const last_page_cmd_addr = getCookie('last_page_cmd_addr')
-                    const last_page_cmd_args = [getCookie('last_page_cmd_args')]
-                    if (last_page_cmd_addr && last_page_cmd_args && Number(last_page_cmd_args[0]) !== cmd_args[0]){
-                        self.doCommand(last_page_cmd_addr, last_page_cmd_args);
-                    }
                 }
             });
         } else {
